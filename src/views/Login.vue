@@ -65,7 +65,6 @@ export default {
         }
       })
       .catch(error => {
-        console.log(error.response.data);
         if (error.response.data.code == 400 || error.response.data.code == 401) {
           this.isNotAllowed = true;
         }
