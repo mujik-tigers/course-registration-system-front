@@ -2,23 +2,49 @@
   <div class="infoSidebar">
     <h3 class="semester">2024학년도 1학기</h3>
     <table class="infoTable">
-      <tr v-for="(category, index) in categories" :key="index">
-        <th style="width: 20%">{{ category }}</th>
-        <td style="text-align: right">{{ info[index] }}</td>
+      <tr v-for="(value, key, index) in info" :key="key">
+        <th style="text-align: left; width: 20%">{{ categories[index] }}</th>
+        <td style="text-align: right">{{ value }}</td>
       </tr>
     </table>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.withCredentials = true;
+
 export default {
   name: "WebSidebar",
   data() {
     return {
+      fetchStudentInfoUrl: "http://localhost:8080/students",
       categories: ["이름", "학번", "소속", "학년"],
-      info: ['김서연', '171000962', '커뮤니케이션디자인학과', '4']
+      info: [],
     };
   },
+  mounted() {
+    this.fetchStudentInfo();
+  },
+  methods: {
+    fetchStudentInfo() {
+      if (this.info.length === 0) {
+        axios.get(this.fetchStudentInfoUrl)
+        .then(res => {
+          if (res.data.code == 200) {
+            this.info = res.data.data;
+          }
+        })
+        .catch(error => {
+            if (error.response &&error.response.data.code == 401) {
+              alert('세션이 만료되어 로그아웃되었습니다');
+              window.location = '/';
+            }
+          }
+        )
+      }
+    },
+  }
 };
 </script>
 
