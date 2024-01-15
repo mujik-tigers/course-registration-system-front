@@ -1,6 +1,6 @@
 <template>
   <div class="sessionClock">
-    <span class="clock">00:00</span>
+    <span class="clock">{{ sessionView }}</span>
     <button class="renewButton" type="submit">연장하기</button>
   </div>
 </template>
@@ -10,8 +10,39 @@ export default {
   name: "SessionClock",
   data() {
     return {
+      sessionSecond: 3600,
+      sessionTimer: null,
+      sessionView: "60:00"
     };
   },
+  mounted() {
+    if (this.sessionTimer == null) {
+      this.sessionTimer = this.timerUpdate();
+    }
+  },
+  methods: {
+    timerUpdate() {
+      const interval = setInterval(() => {
+        this.sessionSecond--;
+        this.sessionView = this.generateView();
+
+        if (this.sessionSecond <= 0) {
+          clearInterval(this.sessionTimer);
+          this.sessionSecond = 0;
+        }
+      }, 1000);
+
+      return interval;
+    },
+    generateView() {
+      let minute = Math.floor(this.sessionSecond / 60);
+      let second = Math.floor(this.sessionSecond % 60 );
+
+      return this.sessionView = minute.toString().padStart(2, '0')
+        + ":"
+        + second.toString().padStart(2, '0');
+    },
+  }
 };
 </script>
 
