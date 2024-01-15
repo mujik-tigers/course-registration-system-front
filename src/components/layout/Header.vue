@@ -8,12 +8,14 @@
       </router-link>
     </div>
     <Clock />
-    <button id="logoutButton">로그아웃</button>
+    <button id="logoutButton" @click="logout">로그아웃</button>
   </div>
 </template>
 
 <script>
 import Clock from '@/components/layout/Clock.vue';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 export default {
   name: "WebHeader",
@@ -39,9 +41,21 @@ export default {
           name: '시간표 조회',
           href: '/schedule'
         }
-      ]
+      ],
+      logoutUrl: 'http://localhost:8080/logout'
     }
   },
+  methods: {
+    logout() {
+      axios.delete(this.logoutUrl)
+      .then(res => {
+        console.log(res.data);
+        if (res.data.code == 200) {
+          window.location = "/";
+        }
+      })
+    }
+  }
 };
 </script>
 
