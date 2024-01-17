@@ -1,7 +1,7 @@
 <template>
   <div class="sessionClock">
     <span class="clock">{{ sessionView }}</span>
-    <button class="renewButton" type="submit">연장하기</button>
+    <button class="renewButton" @click="renewSession">연장하기</button>
   </div>
 </template>
 
@@ -16,7 +16,8 @@ export default {
       fetchSessionTimeUrl: 'http://localhost:8080/clock/session',
       sessionSecond: null,
       sessionTimer: null,
-      sessionView: "60:00"
+      sessionView: "60:00",
+      renewSessionUrl: 'http://localhost:8080/session',
     };
   },
   mounted() {
@@ -63,6 +64,21 @@ export default {
         + ":"
         + second.toString().padStart(2, '0');
     },
+    renewSession() {
+      axios.post(this.renewSessionUrl)
+        .then(res => {
+          if (res.data.code == 201) {
+            this.sessionSecond = res.data.data.sessionRemainingTime;
+          }
+        })
+        .catch(error => {
+            if (error.response &&error.response.data.code == 401) {
+              alert('세션이 만료되어 로그아웃되었습니다');
+              window.location = '/';
+            }
+          }
+        )
+    }
   }
 };
 </script>
