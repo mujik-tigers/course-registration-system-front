@@ -6,21 +6,42 @@
 </template>
 
 <script>
+import axios from 'axios';
+axios.defaults.withCredentials = true;
+
 export default {
   name: "SessionClock",
   data() {
     return {
-      sessionSecond: 3600,
+      fetchSessionTimeUrl: 'http://localhost:8080/clock/session',
+      sessionSecond: null,
       sessionTimer: null,
       sessionView: "60:00"
     };
   },
   mounted() {
+    this.fetchSessionRemainingTime();
+
     if (this.sessionTimer == null) {
       this.sessionTimer = this.timerUpdate();
     }
   },
   methods: {
+    fetchSessionRemainingTime() {
+      axios.get(this.fetchSessionTimeUrl)
+        .then(res => {
+          if (res.data.code == 200) {
+            this.sessionSecond = res.data.data.sessionRemainingTime;
+          }
+        })
+        .catch(error => {
+            if (error.response &&error.response.data.code == 401) {
+              alert('세션이 만료되어 로그아웃되었습니다');
+              window.location = '/';
+            }
+          }
+        )
+    },
     timerUpdate() {
       const interval = setInterval(() => {
         this.sessionSecond--;
