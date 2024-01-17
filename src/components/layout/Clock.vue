@@ -51,6 +51,7 @@ export default {
         if (this.sessionSecond <= 0) {
           clearInterval(this.sessionTimer);
           this.sessionSecond = 0;
+          this.sessionView = "00:00";
         }
       }, 1000);
 
