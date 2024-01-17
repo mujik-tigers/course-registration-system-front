@@ -1,36 +1,43 @@
 <template>
-  <div id="login">
-    <img :src="require('../assets/school.png')" id="logo"/>
-    <h2 class="loginTitle">수강 신청 시스템 로그인</h2>
-    <form class="loginForm">
-      <label for="studentNumber">학번</label>
-      <input
-        style="margin-bottom: 20px"
-        type="text"
-        id="studentNumber"
-        placeholder="학번을 입력해주세요"
-        v-model="loginForm.studentId"
-        required
-        autofocus/>
-      <label for="password">비밀번호</label>
-      <input
-        type="password"
-        id="password"
-        placeholder="비밀번호를 입력해주세요"
-        v-model="loginForm.password"
-        required/>
-    <button class="loginButton" @click="login" :disabled='isNotFilled'>로그인</button>
-    <span class="loginFailMessage" v-if='isNotAllowed'>로그인 정보가 유효하지 않습니다</span>
-    </form>
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div id="login">
+      <img :src="require('../assets/school.png')" id="logo"/>
+      <h2 class="loginTitle">수강 신청 시스템 로그인</h2>
+      <form class="loginForm">
+        <label for="studentNumber">학번</label>
+        <input
+          style="margin-bottom: 20px"
+          type="text"
+          id="studentNumber"
+          placeholder="학번을 입력해주세요"
+          v-model="loginForm.studentId"
+          required
+          autofocus/>
+        <label for="password">비밀번호</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="비밀번호를 입력해주세요"
+          v-model="loginForm.password"
+          required/>
+      <button class="loginButton" @click="login" :disabled='isNotFilled'>로그인</button>
+      <span class="loginFailMessage" v-if='isNotAllowed'>로그인 정보가 유효하지 않습니다</span>
+      </form>
+    </div>
+    <NoticeContent style="padding-left: 100px;"/>
   </div>
 </template>
 
 <script>
+import NoticeContent from '@/components/layout/NoticeContent.vue';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 export default {
   name: "WebLogin",
+  components: {
+    NoticeContent
+  },
   data() {
     return {
       loginUrl: 'http://localhost:8080/login',
@@ -76,11 +83,13 @@ export default {
 
 <style>
 #login {
+  float: left;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   width: 300px;
   height: 700px;
+  margin-left: 50px;
 }
 
 #logo {
