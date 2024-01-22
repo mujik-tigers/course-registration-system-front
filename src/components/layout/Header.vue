@@ -42,7 +42,7 @@ export default {
           href: '/schedule'
         }
       ],
-      logoutUrl: 'http://localhost:8080/logout'
+      logoutUrl: 'https://course-registration-system.site/logout'
     }
   },
   methods: {

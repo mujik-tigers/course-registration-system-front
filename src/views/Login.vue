@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      loginUrl: 'http://localhost:8080/login',
+      loginUrl: 'https://course-registration-system.site/login',
       loginForm: {
         studentId: "",
         password: "",

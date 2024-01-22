@@ -18,7 +18,7 @@ export default {
   name: "WebSidebar",
   data() {
     return {
-      fetchStudentInfoUrl: "http://localhost:8080/students",
+      fetchStudentInfoUrl: "https://course-registration-system.site/students",
       categories: ["이름", "학번", "소속", "학년"],
       info: [],
     };

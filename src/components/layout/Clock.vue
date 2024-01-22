@@ -13,11 +13,11 @@ export default {
   name: "SessionClock",
   data() {
     return {
-      fetchSessionTimeUrl: 'http://localhost:8080/clock/session',
+      fetchSessionTimeUrl: 'https://course-registration-system.site/clock/session',
       sessionSecond: null,
       sessionTimer: null,
       sessionView: "60:00",
-      renewSessionUrl: 'http://localhost:8080/session',
+      renewSessionUrl: 'https://course-registration-system.site/session',
     };
   },
   mounted() {
@@ -36,7 +36,7 @@ export default {
           }
         })
         .catch(error => {
-            if (error.response &&error.response.data.code == 401) {
+            if (error.response && error.response.data.code == 401) {
               alert('세션이 만료되어 로그아웃되었습니다');
               window.location = '/';
             }
