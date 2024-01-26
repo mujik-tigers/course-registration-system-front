@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import NoticeContent from '@/components/layout/NoticeContent.vue';
+import NoticeContent from '@/components/NoticeContent.vue';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 

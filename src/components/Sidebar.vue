@@ -2,7 +2,7 @@
   <div class="infoSidebar">
     <h3 class="semester">2024학년도 1학기</h3>
     <table class="infoTable">
-      <tr v-for="(value, key, index) in info" :key="key">
+      <tr v-for="(value, index) in info" :key="index">
         <th style="text-align: left; width: 20%">{{ categories[index] }}</th>
         <td style="text-align: right">{{ value }}</td>
       </tr>
@@ -32,11 +32,12 @@ export default {
         axios.get(this.fetchStudentInfoUrl)
         .then(res => {
           if (res.data.code == 200) {
-            this.info = res.data.data;
+            const info = res.data.data
+            this.info = [info.name, info.studentId, info.departmentName, info.grade];
           }
         })
         .catch(error => {
-            if (error.response &&error.response.data.code == 401) {
+            if (error.response && error.response.data.code == 401) {
               alert('세션이 만료되어 로그아웃되었습니다');
               window.location = '/';
             }

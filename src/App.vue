@@ -1,12 +1,18 @@
 <template>
-  <div id="content" class="content">
+  <WebHeader v-if="$route.path !== '/'" />
+  <div>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import WebHeader from '@/components/Header.vue';
+
 export default {
   name: "App",
+  components: {
+    WebHeader,
+  },
 };
 </script>
 
