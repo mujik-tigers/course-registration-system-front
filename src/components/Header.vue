@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <img :src="require('../../assets/school.png')" id="logoSmall"/>
+    <img :src="require('../assets/school.png')" id="logoSmall"/>
     <span class="logo">수강 신청 시스템</span>
     <div class="navbar">
       <router-link :to="nav.href" v-for="nav in navbar" :key="nav.href" class="navLink">
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import Clock from '@/components/layout/Clock.vue';
+import Clock from '@/components/Clock.vue';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
