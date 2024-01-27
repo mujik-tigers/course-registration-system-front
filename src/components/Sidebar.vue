@@ -36,13 +36,6 @@ export default {
             this.info = [info.name, info.studentId, info.departmentName, info.grade];
           }
         })
-        .catch(error => {
-            if (error.response && error.response.data.code == 401) {
-              alert('세션이 만료되어 로그아웃되었습니다');
-              window.location = '/';
-            }
-          }
-        )
       }
     },
   }

@@ -52,6 +52,8 @@ export default {
           clearInterval(this.sessionTimer);
           this.sessionSecond = 0;
           this.sessionView = "00:00";
+          alert('세션이 만료되어 로그아웃되었습니다');
+          window.location = '/';
         }
       }, 1000);
 
@@ -73,7 +75,7 @@ export default {
           }
         })
         .catch(error => {
-            if (error.response &&error.response.data.code == 401) {
+            if (error.response && error.response.data.code == 401) {
               alert('세션이 만료되어 로그아웃되었습니다');
               window.location = '/';
             }
