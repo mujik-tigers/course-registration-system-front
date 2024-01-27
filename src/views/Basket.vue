@@ -23,27 +23,29 @@
   </div>
   <div>
     <h4 class="basketPageSubTitle">> 개설 과목 조회 / 신청</h4>
-    <table class="basketPageTable">
-      <tr>
-        <th v-for="(value, index) in lectureCategories" :key="index" scope="col">{{ value }}</th>
-      </tr>
-      <tr v-for="(value, index) in lectures" :key="index">
-        <td style="width: 4%;">{{ currentPage * 20 + index + 1 }}</td>
-        <td style="width: 10%;">{{ value.lectureNumber }}</td>
-        <td style="width: 6%;">{{ value.subjectDivision }}</td>
-        <td style="width: 22%;">{{ value.subjectName }}</td>
-        <td style="width: 4%;">{{ value.credits }}</td>
-        <td style="width: 4%;">{{ value.hoursPerWeek }}</td>
-        <td style="width: 8%;">{{ value.schedule }}</td>
-        <td style="width: 6%;">{{ value.targetGrade }}</td>
-        <td style="width: 16%;">{{ value.departmentName }}</td>
-        <td style="width: 7%;">{{ value.professorName }}</td>
-        <td style="width: 6%;">{{ applicants[index] }}/{{ value.totalCapacity }}</td>
-        <td style="width: 7%;">
-          <button @click="fetchApplicants(value.id, index)" class="basketPageButton">새로고침</button>
-        </td>
-      </tr>
-    </table>
+    <div style="width:100%; height:500px; overflow:auto">
+      <table class="basketPageTable">
+        <tr>
+          <th v-for="(value, index) in lectureCategories" :key="index" scope="col">{{ value }}</th>
+        </tr>
+        <tr v-for="(value, index) in lectures" :key="index">
+          <td style="width: 4%;">{{ currentPage * 20 + index + 1 }}</td>
+          <td style="width: 10%;">{{ value.lectureNumber }}</td>
+          <td style="width: 6%;">{{ value.subjectDivision }}</td>
+          <td style="width: 22%;">{{ value.subjectName }}</td>
+          <td style="width: 4%;">{{ value.credits }}</td>
+          <td style="width: 4%;">{{ value.hoursPerWeek }}</td>
+          <td style="width: 8%;">{{ value.schedule }}</td>
+          <td style="width: 6%;">{{ value.targetGrade }}</td>
+          <td style="width: 16%;">{{ value.departmentName }}</td>
+          <td style="width: 7%;">{{ value.professorName }}</td>
+          <td style="width: 6%;">{{ applicants[index] }}/{{ value.totalCapacity }}</td>
+          <td style="width: 7%;">
+            <button @click="fetchApplicants(value.id, index)" class="basketPageButton">새로고침</button>
+          </td>
+        </tr>
+      </table>
+    </div>
     <button @click="fetchLectures(currentPage - 1)" v-show="hasPrevious" class="basketPageButton"
       style="float: left; margin: 10px 2px;">이전 페이지</button>
     <button @click="fetchLectures(currentPage + 1)" v-show="hasNext" class="basketPageButton"
