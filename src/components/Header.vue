@@ -37,10 +37,6 @@ export default {
           name: '수강 신청',
           href: '/enrollment'
         },
-        {
-          name: '시간표 조회',
-          href: '/schedule'
-        }
       ],
       logoutUrl: 'https://course-registration-system.site/logout'
     }
