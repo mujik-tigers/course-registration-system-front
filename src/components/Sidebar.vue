@@ -1,6 +1,6 @@
 <template>
   <div class="infoSidebar">
-    <h3 class="semester">2024학년도 1학기</h3>
+    <h3 class="semester">{{ openingYear }}학년도 {{ semester }}학기</h3>
     <table class="infoTable">
       <tr v-for="(value, index) in info" :key="index">
         <th style="text-align: left; width: 20%">{{ categories[index] }}</th>
@@ -18,13 +18,17 @@ export default {
   name: "WebSidebar",
   data() {
     return {
+      fetchYearAndSemesterUrl: "https://course-registration-system.site/clock/current-year-and-semester",
       fetchStudentInfoUrl: "https://course-registration-system.site/students",
       categories: ["이름", "학번", "소속", "학년"],
       info: [],
+      openingYear: null,
+      semester: null,
     };
   },
   mounted() {
     this.fetchStudentInfo();
+    this.fetchCurrentYearAndSemester();
   },
   methods: {
     fetchStudentInfo() {
@@ -37,6 +41,25 @@ export default {
           }
         })
       }
+    },
+    fetchCurrentYearAndSemester() {
+      axios.get(this.fetchYearAndSemesterUrl)
+        .then(res => {
+          if (res.data.code == 200) {
+            this.openingYear = res.data.data.year;
+            const semester = res.data.data.semester;
+            if (semester == 'FIRST') {
+              this.semester = 1;
+            } else {
+              this.semester = 2;
+            }
+          }
+        })
+        .catch(error => {
+          if (error.response && error.response.data.code == 400) {
+            alert(error.response.data.message);
+          }
+        });
     },
   }
 };
