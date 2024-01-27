@@ -1,29 +1,34 @@
 <template>
   <div style="padding-bottom: 40px;">
     <h4 class="basketPageSubTitle">> 수강 바구니 신청 내역</h4>
-    <table class="basketPageTable">
-      <tr>
-        <th v-for="(value, index) in basketCategories" :key="index" scope="col">{{ value }}</th>
-      </tr>
-      <tr v-for="(value, index) in studentBasket" :key="index">
-        <td>{{ index + 1 }}</td>
-        <td>{{ value.targetGrade }}</td>
-        <td>{{ value.subjectDivision }}</td>
-        <td>{{ value.lectureNumber }}</td>
-        <td>{{ value.subjectName }}</td>
-        <td>{{ value.credits }}</td>
-        <td>{{ value.hoursPerWeek }}</td>
-        <td>{{ value.schedule }}</td>
-        <td>{{ value.professorName }}</td>
-        <td>
-          <button @click="cancelLecture(value.id, index)" class="basketPageButton">취소</button>
-        </td>
-      </tr>
-    </table>
+    <div style="width:100%; max-height:150px; overflow:auto">
+      <table class="basketPageTable">
+        <tr>
+          <th v-for="(value, index) in basketCategories" :key="index" scope="col">{{ value }}</th>
+        </tr>
+        <tr v-for="(value, index) in studentBasket" :key="index">
+          <td>{{ index + 1 }}</td>
+          <td>{{ value.targetGrade }}</td>
+          <td>{{ value.subjectDivision }}</td>
+          <td>{{ value.lectureNumber }}</td>
+          <td>{{ value.subjectName }}</td>
+          <td>{{ value.credits }}</td>
+          <td>{{ value.hoursPerWeek }}</td>
+          <td>{{ value.schedule }}</td>
+          <td>{{ value.professorName }}</td>
+          <td>
+            <button @click="cancelLecture(value.id, index)" class="basketPageButton">취소</button>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
   <div>
+    <div>
+
+    </div>
     <h4 class="basketPageSubTitle">> 개설 과목 조회 / 신청</h4>
-    <div style="width:100%; height:500px; overflow:auto">
+    <div style="width:100%; height:400px; overflow:auto">
       <table class="basketPageTable">
         <tr>
           <th v-for="(value, index) in lectureCategories" :key="index" scope="col">{{ value }}</th>
@@ -35,13 +40,16 @@
           <td style="width: 22%;">{{ value.subjectName }}</td>
           <td style="width: 4%;">{{ value.credits }}</td>
           <td style="width: 4%;">{{ value.hoursPerWeek }}</td>
-          <td style="width: 8%;">{{ value.schedule }}</td>
-          <td style="width: 6%;">{{ value.targetGrade }}</td>
-          <td style="width: 16%;">{{ value.departmentName }}</td>
-          <td style="width: 7%;">{{ value.professorName }}</td>
+          <td style="width: 7%;">{{ value.schedule }}</td>
+          <td style="width: 5%;">{{ value.targetGrade }}</td>
+          <td style="width: 13%;">{{ value.departmentName }}</td>
+          <td style="width: 9%;">{{ value.professorName }}</td>
           <td style="width: 6%;">{{ applicants[index] }}/{{ value.totalCapacity }}</td>
-          <td style="width: 7%;">
+          <td style="width: 6%;">
             <button @click="fetchApplicants(value.id, index)" class="basketPageButton">새로고침</button>
+          </td>
+          <td style="width: 4%;">
+            <button @click="fetchApplicants(value.id, index)" class="basketPageButton">신청</button>
           </td>
         </tr>
       </table>
@@ -66,7 +74,7 @@ export default {
       basketCategories: ["NO.", "학년", "이수구분", "강의번호", "교과목명", "학점", "시간", "일정", "담당교수", "취소"],
       studentBasket: [],
       lectureBaseUrl: "https://course-registration-system.site/lectures",
-      lectureCategories: ["NO.", "강의번호", "이수구분", "교과목명", "학점", "시간", "일정", "대상학년", "개설학과", "교강사", "신청/정원", "새로고침"],
+      lectureCategories: ["NO.", "강의번호", "이수구분", "교과목명", "학점", "시간", "일정", "대상학년", "개설학과", "교강사", "신청/정원", "새로고침", "신청"],
       lectures: [],
       openingYear: null,
       semester: null,
@@ -157,7 +165,7 @@ export default {
 }
 
 .basketPageTable {
-  width: 1100px;
+  width: 1200px;
   text-align: center;
   font-size: 13px;
 }
