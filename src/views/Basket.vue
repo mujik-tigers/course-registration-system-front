@@ -1,7 +1,7 @@
 <template>
-  <div style="padding-bottom: 40px;">
+  <div style="padding-bottom: 40px">
     <h4 class="basketPageSubTitle">> 수강 바구니 신청 내역</h4>
-    <div style="width:100%; max-height:150px; overflow:auto">
+    <div style="width: 100%; max-height: 150px; overflow: auto">
       <table class="basketPageTable">
         <tr>
           <th v-for="(value, index) in basketCategories" :key="index" scope="col">{{ value }}</th>
@@ -24,49 +24,63 @@
     </div>
   </div>
   <div>
-    <div>
-
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h4 class="basketPageSubTitle" style="float: left">> 개설 과목 조회 / 신청</h4>
+      <WebFilter></WebFilter>
     </div>
-    <h4 class="basketPageSubTitle">> 개설 과목 조회 / 신청</h4>
-    <div style="width:100%; height:400px; overflow:auto">
+    <div style="width: 100%; height: 300px; overflow: auto">
       <table class="basketPageTable">
         <tr>
           <th v-for="(value, index) in lectureCategories" :key="index" scope="col">{{ value }}</th>
         </tr>
         <tr v-for="(value, index) in lectures" :key="index">
-          <td style="width: 4%;">{{ currentPage * 20 + index + 1 }}</td>
-          <td style="width: 10%;">{{ value.lectureNumber }}</td>
-          <td style="width: 6%;">{{ value.subjectDivision }}</td>
-          <td style="width: 22%;">{{ value.subjectName }}</td>
-          <td style="width: 4%;">{{ value.credits }}</td>
-          <td style="width: 4%;">{{ value.hoursPerWeek }}</td>
-          <td style="width: 7%;">{{ value.schedule }}</td>
-          <td style="width: 5%;">{{ value.targetGrade }}</td>
-          <td style="width: 13%;">{{ value.departmentName }}</td>
-          <td style="width: 9%;">{{ value.professorName }}</td>
-          <td style="width: 6%;">{{ applicants[index] }}/{{ value.totalCapacity }}</td>
-          <td style="width: 6%;">
+          <td style="width: 4%">{{ currentPage * 20 + index + 1 }}</td>
+          <td style="width: 10%">{{ value.lectureNumber }}</td>
+          <td style="width: 6%">{{ value.subjectDivision }}</td>
+          <td style="width: 22%">{{ value.subjectName }}</td>
+          <td style="width: 4%">{{ value.credits }}</td>
+          <td style="width: 4%">{{ value.hoursPerWeek }}</td>
+          <td style="width: 7%">{{ value.schedule }}</td>
+          <td style="width: 5%">{{ value.targetGrade }}</td>
+          <td style="width: 13%">{{ value.departmentName }}</td>
+          <td style="width: 9%">{{ value.professorName }}</td>
+          <td style="width: 6%">{{ applicants[index] }}/{{ value.totalCapacity }}</td>
+          <td style="width: 6%">
             <button @click="fetchApplicants(value.id, index)" class="basketPageButton">새로고침</button>
           </td>
-          <td style="width: 4%;">
+          <td style="width: 4%">
             <button @click="fetchApplicants(value.id, index)" class="basketPageButton">신청</button>
           </td>
         </tr>
       </table>
     </div>
-    <button @click="fetchLectures(currentPage - 1)" v-show="hasPrevious" class="basketPageButton"
-      style="float: left; margin: 10px 2px;">이전 페이지</button>
-    <button @click="fetchLectures(currentPage + 1)" v-show="hasNext" class="basketPageButton"
-      style="float: right; margin: 10px 2px;">다음 페이지</button>
+    <button
+      @click="fetchLectures(currentPage - 1)"
+      v-show="hasPrevious"
+      class="basketPageButton"
+      style="float: left; margin: 10px 2px">
+      이전 페이지
+    </button>
+    <button
+      @click="fetchLectures(currentPage + 1)"
+      v-show="hasNext"
+      class="basketPageButton"
+      style="float: right; margin: 10px 2px">
+      다음 페이지
+    </button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import WebFilter from "@/components/Filter.vue";
+import axios from "axios";
 axios.defaults.withCredentials = true;
 
 export default {
   name: "WebBasket",
+  components: {
+    WebFilter,
+  },
   data() {
     return {
       fetchYearAndSemesterUrl: "https://course-registration-system.site/clock/current-year-and-semester",
@@ -74,14 +88,28 @@ export default {
       basketCategories: ["NO.", "학년", "이수구분", "강의번호", "교과목명", "학점", "시간", "일정", "담당교수", "취소"],
       studentBasket: [],
       lectureBaseUrl: "https://course-registration-system.site/lectures",
-      lectureCategories: ["NO.", "강의번호", "이수구분", "교과목명", "학점", "시간", "일정", "대상학년", "개설학과", "교강사", "신청/정원", "새로고침", "신청"],
+      lectureCategories: [
+        "NO.",
+        "강의번호",
+        "이수구분",
+        "교과목명",
+        "학점",
+        "시간",
+        "일정",
+        "대상학년",
+        "개설학과",
+        "교강사",
+        "신청/정원",
+        "새로고침",
+        "신청",
+      ],
       lectures: [],
       openingYear: null,
       semester: null,
       applicants: [],
       hasPrevious: true,
       hasNext: true,
-      currentPage: 0
+      currentPage: 0,
     };
   },
   mounted() {
@@ -91,20 +119,22 @@ export default {
   methods: {
     fetchStudentBasket() {
       if (this.studentBasket.length === 0) {
-        axios.get(this.basketBaseUrl)
-          .then(res => {
-            if (res.data.code == 200) {
-              this.studentBasket = res.data.data.baskets;
-            }
-          })
+        axios.get(this.basketBaseUrl).then((res) => {
+          if (res.data.code == 200) {
+            this.studentBasket = res.data.data.baskets;
+          }
+        });
       }
     },
     async fetchLectures(pageNumber) {
       if (this.openingYear === null || this.semester === null) {
         await this.fetchCurrentYearAndSemester();
       }
-      axios.get(this.lectureBaseUrl, { params: { openingYear: this.openingYear, semester: this.semester, page: pageNumber } })
-        .then(res => {
+      axios
+        .get(this.lectureBaseUrl, {
+          params: { openingYear: this.openingYear, semester: this.semester, page: pageNumber },
+        })
+        .then((res) => {
           if (res.data.code == 200) {
             this.lectures = res.data.data.lectures;
             this.applicants = Array.from({ length: this.lectures.length }, () => null);
@@ -112,54 +142,58 @@ export default {
             this.hasPrevious = !res.data.data.first;
             this.hasNext = !res.data.data.last;
           }
-        })
+        });
     },
     cancelLecture(basketId, index) {
-      axios.delete(this.basketBaseUrl + "/" + basketId)
-        .then(res => {
+      axios
+        .delete(this.basketBaseUrl + "/" + basketId)
+        .then((res) => {
           if (res.data.code == 200) {
             this.studentBasket.splice(index, 1);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response && error.response.data.code == 400) {
             alert(error.response.data.message);
           }
-        })
+        });
     },
     fetchApplicants(lectureId, index) {
-      axios.get(this.lectureBaseUrl + "/" + lectureId + "/basket-count")
-        .then(res => {
+      axios
+        .get(this.lectureBaseUrl + "/" + lectureId + "/basket-count")
+        .then((res) => {
           if (res.data.code == 200) {
             this.applicants[index] = res.data.data.currentBasketStoringCount;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response && error.response.data.code == 400) {
             alert(error.response.data.message);
           }
         });
     },
     async fetchCurrentYearAndSemester() {
-      await axios.get(this.fetchYearAndSemesterUrl)
-        .then(res => {
+      await axios
+        .get(this.fetchYearAndSemesterUrl)
+        .then((res) => {
           if (res.data.code == 200) {
             this.openingYear = res.data.data.year;
             this.semester = res.data.data.semester;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.response && error.response.data.code == 400) {
             alert(error.response.data.message);
           }
         });
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
 .basketPageSubTitle {
+  width: fit-content;
   font-size: 15px;
   font-weight: 550;
 }
@@ -178,6 +212,8 @@ export default {
 }
 
 .basketPageTable th {
+  position: sticky;
+  top: -1px;
   font-weight: 550;
   background: #f1f6f8;
 }

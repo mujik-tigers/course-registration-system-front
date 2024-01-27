@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import WebHeader from '@/components/Header.vue';
+import WebHeader from "@/components/Header.vue";
 
 export default {
   name: "App",
@@ -23,5 +23,9 @@ export default {
   align-items: center;
   justify-content: center;
   color: #413f3f;
+}
+
+html {
+  overflow-y: scroll;
 }
 </style>
