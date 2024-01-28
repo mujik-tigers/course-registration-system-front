@@ -1,6 +1,6 @@
 <template>
   <div style="padding-bottom: 50px">
-    <h4 class="enrollmentPageSubTitle">{{ openingYear }}년도 {{ semesterView }}학기 수강 신청 내역</h4>
+    <h4 class="enrollmentPageSubTitle">{{ openingYear }}년도 {{ semesterView }}학기 수강 신청 내역 - 현재 담은 학점 {{totalCredit}}</h4>
     <div style="width: 100%; max-height: 200px; overflow: auto">
       <table class="enrollPageTable">
         <thead>
@@ -64,7 +64,7 @@
               <td>{{ value.schedule }}</td>
               <td>{{ value.professorName }}</td>
               <td>
-                <button class="enrollPageButton">신청</button>
+                <button class="enrollPageButton" @click="registerLectureByNumber(value.lectureNumber)">신청</button>
               </td>
             </tr>
           </table>
@@ -95,7 +95,7 @@
                   <button @click="fetchApplicants(value.id, index)" class="enrollPageButton">새로고침</button>
                 </td>
                 <td style="width: 4%">
-                  <button class="enrollPageButton">신청</button>
+                  <button class="enrollPageButton" @click="registerLecture(value.id)">신청</button>
                 </td>
               </tr>
             </table>
@@ -164,6 +164,7 @@ export default {
       hasPrevious: true,
       hasNext: true,
       currentPage: 0,
+      totalCredit: 0
     };
   },
   mounted() {
@@ -176,6 +177,11 @@ export default {
       axios.get(this.enrollmentBaseUrl).then((res) => {
         if (res.data.code == 200) {
           this.enrolledLectures = res.data.data.enrolledLectures;
+
+          this.totalCredit = 0;
+          this.enrolledLectures.forEach(lecture => {
+            this.totalCredit += lecture.credits;
+          });
         }
       });
     },
@@ -243,6 +249,46 @@ export default {
             alert(error.response.data.message);
           }
         });
+    },
+    registerLecture(lectureId) {
+      axios.post(this.enrollmentBaseUrl + "/" + lectureId)
+          .then((res) => {
+            if (res.data.code == 201) {
+              this.fetchStudentEnrollment();
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              alert(error.response.data.message);
+            }
+          });
+    },
+    registerLectureByNumber(lectureNumber) {
+      axios.post(this.enrollmentBaseUrl + "/fast/" + lectureNumber)
+          .then((res) => {
+            if (res.data.code == 201) {
+              this.fetchStudentEnrollment();
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              alert(error.response.data.message);
+            }
+          });
+    },
+    cancelLecture(enrollmentId, index) {
+      axios.delete(this.enrollmentBaseUrl + "/" + enrollmentId)
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.totalCredit -= this.enrolledLectures[index].credits;
+              this.enrolledLectures.splice(index, 1);
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.data.code == 400) {
+              alert(error.response.data.message);
+            }
+          });
     },
   },
 };

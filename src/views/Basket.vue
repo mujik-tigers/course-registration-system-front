@@ -1,6 +1,6 @@
 <template>
   <div style="padding-bottom: 40px">
-    <h4 class="basketPageSubTitle">> 수강 바구니 신청 내역 - 현재 담은 학점 {{totalCredit}}</h4>
+    <h4 class="basketPageSubTitle">> 수강 바구니 신청 내역 - 현재 담은 학점 {{ totalCredit }}</h4>
     <div style="width: 100%; max-height: 150px; overflow: auto">
       <table class="basketPageTable">
         <tr>
@@ -120,18 +120,16 @@ export default {
   },
   methods: {
     fetchStudentBasket() {
-      if (this.studentBasket.length === 0) {
-        axios.get(this.basketBaseUrl).then((res) => {
-          if (res.data.code == 200) {
-            this.studentBasket = res.data.data.baskets;
+      axios.get(this.basketBaseUrl).then((res) => {
+        if (res.data.code == 200) {
+          this.studentBasket = res.data.data.baskets;
 
-            this.totalCredit = 0;
-            this.studentBasket.forEach(basket => {
-              this.totalCredit += basket.credits;
-            });
-          }
-        });
-      }
+          this.totalCredit = 0;
+          this.studentBasket.forEach(basket => {
+            this.totalCredit += basket.credits;
+          });
+        }
+      });
     },
     async fetchLectures(pageNumber) {
       if (this.openingYear === null || this.semester === null) {
@@ -192,10 +190,10 @@ export default {
           });
     },
     registerLecture(lectureId) {
-       axios.post(this.basketBaseUrl + "/" + lectureId)
+      axios.post(this.basketBaseUrl + "/" + lectureId)
           .then((res) => {
             if (res.data.code === 200) {
-              window.location = '/basket';
+              this.fetchStudentBasket();
             }
           })
           .catch((error) => {
