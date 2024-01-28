@@ -39,7 +39,7 @@
     <div
         style="float: right; width: fit-content; display: flex; align-items: flex-end; justify-content: center"
         v-if="currentTab == 1">
-      <WebFilter/>
+      <WebFilter @set-lecture-filter-options="setLectureFilterOptions"></WebFilter>
       <form class="filterOptions" style="padding-left: 20px" @submit.prevent="registerLectureByNumber(lectureNumber)">
         <label class="optionLabels" for="fastEnroll">빠른 수강 신청</label>
         <input id="fastEnroll" placeholder="강의번호" type="text" style="width: 70px" v-model.trim="lectureNumber"/>
@@ -166,7 +166,11 @@ export default {
       hasNext: true,
       currentPage: 0,
       totalCredit: 0,
-      lectureNumber: null
+      lectureNumber: null,
+
+      selectedSubjectDivision: null,
+      selectedDepartment: null,
+      subjectName: null,
     };
   },
   mounted() {
@@ -206,6 +210,9 @@ export default {
               openingYear: this.openingYear,
               semester: this.semester,
               page: pageNumber,
+              subjectDivision: this.selectedSubjectDivision,
+              departmentId: this.selectedDepartment,
+              subjectName: this.subjectName
             },
           })
           .then((res) => {
@@ -217,6 +224,13 @@ export default {
               this.hasNext = !res.data.data.last;
             }
           });
+    },
+    setLectureFilterOptions(subjectDivision, department, subjectName) {
+      this.selectedSubjectDivision = subjectDivision;
+      this.selectedDepartment = department;
+      this.subjectName = subjectName;
+
+      this.fetchLectures(0);
     },
     fetchApplicants(lectureId, index) {
       axios

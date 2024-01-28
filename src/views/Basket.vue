@@ -26,7 +26,7 @@
   <div>
     <div style="display: flex; justify-content: space-between; align-items: center">
       <h4 class="basketPageSubTitle" style="float: left">> 개설 과목 조회 / 신청</h4>
-      <WebFilter></WebFilter>
+      <WebFilter @set-lecture-filter-options="setLectureFilterOptions"></WebFilter>
     </div>
     <div style="width: 100%; height: 300px; overflow: auto">
       <table class="basketPageTable">
@@ -112,6 +112,10 @@ export default {
       hasPrevious: true,
       hasNext: true,
       currentPage: 0,
+
+      selectedSubjectDivision: null,
+      selectedDepartment: null,
+      subjectName: null,
     };
   },
   mounted() {
@@ -136,7 +140,14 @@ export default {
         await this.fetchCurrentYearAndSemester();
       }
       axios.get(this.lectureBaseUrl, {
-        params: {openingYear: this.openingYear, semester: this.semester, page: pageNumber},
+        params: {
+          openingYear: this.openingYear,
+          semester: this.semester,
+          page: pageNumber,
+          subjectDivision: this.selectedSubjectDivision,
+          departmentId: this.selectedDepartment,
+          subjectName: this.subjectName
+        },
       })
           .then((res) => {
             if (res.data.code == 200) {
@@ -147,6 +158,13 @@ export default {
               this.hasNext = !res.data.data.last;
             }
           });
+    },
+    setLectureFilterOptions(subjectDivision, department, subjectName) {
+      this.selectedSubjectDivision = subjectDivision;
+      this.selectedDepartment = department;
+      this.subjectName = subjectName;
+
+      this.fetchLectures(0);
     },
     cancelLecture(basketId, index) {
       axios.delete(this.basketBaseUrl + "/" + basketId)
