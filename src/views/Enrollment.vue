@@ -1,49 +1,49 @@
 <template>
   <div style="padding-bottom: 50px">
-    <h4 class="enrollmentPageSubTitle">{{ openingYear }}년도 {{ semesterView }}학기 수강 신청 내역 - 현재 담은 학점 {{totalCredit}}</h4>
+    <h4 class="enrollmentPageSubTitle">{{ openingYear }}년도 {{ semesterView }}학기 수강 신청 내역 - 현재 담은 학점 {{ totalCredit }}</h4>
     <div style="width: 100%; max-height: 200px; overflow: auto">
       <table class="enrollPageTable">
         <thead>
-          <tr>
-            <th v-for="(value, index) in basketCategories" :key="index" scope="col">{{ value }}</th>
-          </tr>
+        <tr>
+          <th v-for="(value, index) in basketCategories" :key="index" scope="col">{{ value }}</th>
+        </tr>
         </thead>
         <tbody>
-          <tr v-for="(value, index) in enrolledLectures" :key="index">
-            <td>{{ index + 1 }}</td>
-            <td>{{ value.targetGrade }}</td>
-            <td>{{ value.subjectDivision }}</td>
-            <td>{{ value.lectureNumber }}</td>
-            <td>{{ value.subjectName }}</td>
-            <td>{{ value.credits }}</td>
-            <td>{{ value.hoursPerWeek }}</td>
-            <td>{{ value.schedule }}</td>
-            <td>{{ value.professorName }}</td>
-            <td>
-              <button @click="cancelLecture(value.id, index)" class="enrollPageButton">취소</button>
-            </td>
-          </tr>
+        <tr v-for="(value, index) in enrolledLectures" :key="index">
+          <td>{{ index + 1 }}</td>
+          <td>{{ value.targetGrade }}</td>
+          <td>{{ value.subjectDivision }}</td>
+          <td>{{ value.lectureNumber }}</td>
+          <td>{{ value.subjectName }}</td>
+          <td>{{ value.credits }}</td>
+          <td>{{ value.hoursPerWeek }}</td>
+          <td>{{ value.schedule }}</td>
+          <td>{{ value.professorName }}</td>
+          <td>
+            <button @click="cancelLecture(value.id, index)" class="enrollPageButton">취소</button>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>
   </div>
   <div id="enrollTabs">
     <button
-      class="enrollTab"
-      v-for="(tab, index) in tabs"
-      :key="index"
-      v-bind:class="{ active: currentTab === index }"
-      v-on:click="currentTab = index">
+        class="enrollTab"
+        v-for="(tab, index) in tabs"
+        :key="index"
+        v-bind:class="{ active: currentTab === index }"
+        v-on:click="currentTab = index">
       {{ tab }}
     </button>
     <div
-      style="float: right; width: fit-content; display: flex; align-items: flex-end; justify-content: center"
-      v-if="currentTab == 1">
-      <WebFilter />
-      <form class="filterOptions" style="padding-left: 20px">
+        style="float: right; width: fit-content; display: flex; align-items: flex-end; justify-content: center"
+        v-if="currentTab == 1">
+      <WebFilter/>
+      <form class="filterOptions" style="padding-left: 20px" @submit.prevent="registerLectureByNumber(lectureNumber)">
         <label class="optionLabels" for="fastEnroll">빠른 수강 신청</label>
-        <input id="fastEnroll" placeholder="강의번호" type="text" style="width: 70px" />
-        <button class="enrollPageButton" style="margin: 0px 10px">신청</button>
+        <input id="fastEnroll" placeholder="강의번호" type="text" style="width: 70px" v-model.trim="lectureNumber"/>
+        <button class="enrollPageButton" style="margin: 0px 10px" @click.stop>신청</button>
       </form>
     </div>
     <div class="enrollTabContent">
@@ -101,17 +101,17 @@
             </table>
           </div>
           <button
-            @click="fetchLectures(currentPage - 1)"
-            v-show="hasPrevious"
-            class="enrollPageButton"
-            style="float: left; margin: 10px 2px">
+              @click="fetchLectures(currentPage - 1)"
+              v-show="hasPrevious"
+              class="enrollPageButton"
+              style="float: left; margin: 10px 2px">
             이전 페이지
           </button>
           <button
-            @click="fetchLectures(currentPage + 1)"
-            v-show="hasNext"
-            class="enrollPageButton"
-            style="float: right; margin: 10px 2px">
+              @click="fetchLectures(currentPage + 1)"
+              v-show="hasNext"
+              class="enrollPageButton"
+              style="float: right; margin: 10px 2px">
             다음 페이지
           </button>
         </div>
@@ -123,6 +123,7 @@
 <script>
 import WebFilter from "@/components/Filter.vue";
 import axios from "axios";
+
 axios.defaults.withCredentials = true;
 
 export default {
@@ -164,7 +165,8 @@ export default {
       hasPrevious: true,
       hasNext: true,
       currentPage: 0,
-      totalCredit: 0
+      totalCredit: 0,
+      lectureNumber: null
     };
   },
   mounted() {
@@ -199,56 +201,56 @@ export default {
         await this.fetchCurrentYearAndSemester();
       }
       axios
-        .get(this.lectureBaseUrl, {
-          params: {
-            openingYear: this.openingYear,
-            semester: this.semester,
-            page: pageNumber,
-          },
-        })
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.lectures = res.data.data.lectures;
-            this.applicants = Array.from({ length: this.lectures.length }, () => null);
-            this.currentPage = res.data.data.number;
-            this.hasPrevious = !res.data.data.first;
-            this.hasNext = !res.data.data.last;
-          }
-        });
+          .get(this.lectureBaseUrl, {
+            params: {
+              openingYear: this.openingYear,
+              semester: this.semester,
+              page: pageNumber,
+            },
+          })
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.lectures = res.data.data.lectures;
+              this.applicants = Array.from({length: this.lectures.length}, () => null);
+              this.currentPage = res.data.data.number;
+              this.hasPrevious = !res.data.data.first;
+              this.hasNext = !res.data.data.last;
+            }
+          });
     },
     fetchApplicants(lectureId, index) {
       axios
-        .get(this.enrollmentBaseUrl + "/" + lectureId + "/enrollment-count")
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.applicants[index] = res.data.data.currentEnrollmentCount;
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.data.code == 400) {
-            alert(error.response.data.message);
-          }
-        });
+          .get(this.enrollmentBaseUrl + "/" + lectureId + "/enrollment-count")
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.applicants[index] = res.data.data.currentEnrollmentCount;
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.data.code == 400) {
+              alert(error.response.data.message);
+            }
+          });
     },
     async fetchCurrentYearAndSemester() {
       await axios
-        .get(this.fetchYearAndSemesterUrl)
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.openingYear = res.data.data.year;
-            this.semester = res.data.data.semester;
-            if (this.semester == "FIRST") {
-              this.semesterView = 1;
-            } else {
-              this.semesterView = 2;
+          .get(this.fetchYearAndSemesterUrl)
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.openingYear = res.data.data.year;
+              this.semester = res.data.data.semester;
+              if (this.semester == "FIRST") {
+                this.semesterView = 1;
+              } else {
+                this.semesterView = 2;
+              }
             }
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.data.code == 400) {
-            alert(error.response.data.message);
-          }
-        });
+          })
+          .catch((error) => {
+            if (error.response && error.response.data.code == 400) {
+              alert(error.response.data.message);
+            }
+          });
     },
     registerLecture(lectureId) {
       axios.post(this.enrollmentBaseUrl + "/" + lectureId)
@@ -275,6 +277,7 @@ export default {
               alert(error.response.data.message);
             }
           });
+      this.lectureNumber = null;
     },
     cancelLecture(enrollmentId, index) {
       axios.delete(this.enrollmentBaseUrl + "/" + enrollmentId)
