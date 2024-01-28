@@ -44,8 +44,8 @@
           <p>2학년 : {{ enrollmentRegistrationPeriods["SOPHOMORE"].startTime }} ~ {{ enrollmentRegistrationPeriods["SOPHOMORE"].endTime }}</p>
           <p>3학년 : {{ enrollmentRegistrationPeriods["JUNIOR"].startTime }} ~ {{ enrollmentRegistrationPeriods["JUNIOR"].endTime }}</p>
           <p>4학년 : {{ enrollmentRegistrationPeriods["SENIOR"].startTime }} ~ {{ enrollmentRegistrationPeriods["SENIOR"].endTime }}</p>
-          <!--          <h4 class="noticeTitle">> 수강 신청 확인 및 정정 기간</h4>-->
-          <!--          <p>2024. 2. 26.(월) 10:00 ~ 3. 4.(월) 23:00</p>-->
+                    <h4 class="noticeTitle">> 수강 신청 확인 및 정정 기간</h4>
+                    <p>{{ enrollmentRegistrationPeriods["COMMON"].startTime }} ~ {{ enrollmentRegistrationPeriods["COMMON"].endTime }}</p>
         </div>
       </div>
     </div>
@@ -82,6 +82,11 @@ export default {
           endTime: null
         },
         "SENIOR": {
+          grade: null,
+          startTime: null,
+          endTime: null
+        },
+        "COMMON": {
           grade: null,
           startTime: null,
           endTime: null

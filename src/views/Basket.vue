@@ -1,6 +1,6 @@
 <template>
   <div style="padding-bottom: 40px">
-    <h4 class="basketPageSubTitle">> 수강 바구니 신청 내역</h4>
+    <h4 class="basketPageSubTitle">> 수강 바구니 신청 내역 - 현재 담은 학점 {{totalCredit}}</h4>
     <div style="width: 100%; max-height: 150px; overflow: auto">
       <table class="basketPageTable">
         <tr>
@@ -49,23 +49,23 @@
             <button @click="fetchApplicants(value.id, index)" class="basketPageButton">새로고침</button>
           </td>
           <td style="width: 4%">
-            <button @click="fetchApplicants(value.id, index)" class="basketPageButton">신청</button>
+            <button @click="registerLecture(value.id)" class="basketPageButton">신청</button>
           </td>
         </tr>
       </table>
     </div>
     <button
-      @click="fetchLectures(currentPage - 1)"
-      v-show="hasPrevious"
-      class="basketPageButton"
-      style="float: left; margin: 10px 2px">
+        @click="fetchLectures(currentPage - 1)"
+        v-show="hasPrevious"
+        class="basketPageButton"
+        style="float: left; margin: 10px 2px">
       이전 페이지
     </button>
     <button
-      @click="fetchLectures(currentPage + 1)"
-      v-show="hasNext"
-      class="basketPageButton"
-      style="float: right; margin: 10px 2px">
+        @click="fetchLectures(currentPage + 1)"
+        v-show="hasNext"
+        class="basketPageButton"
+        style="float: right; margin: 10px 2px">
       다음 페이지
     </button>
   </div>
@@ -74,6 +74,7 @@
 <script>
 import WebFilter from "@/components/Filter.vue";
 import axios from "axios";
+
 axios.defaults.withCredentials = true;
 
 export default {
@@ -87,6 +88,7 @@ export default {
       basketBaseUrl: "https://course-registration-system.site/baskets",
       basketCategories: ["NO.", "학년", "이수구분", "강의번호", "교과목명", "학점", "시간", "일정", "담당교수", "취소"],
       studentBasket: [],
+      totalCredit: 0,
       lectureBaseUrl: "https://course-registration-system.site/lectures",
       lectureCategories: [
         "NO.",
@@ -122,6 +124,11 @@ export default {
         axios.get(this.basketBaseUrl).then((res) => {
           if (res.data.code == 200) {
             this.studentBasket = res.data.data.baskets;
+
+            this.totalCredit = 0;
+            this.studentBasket.forEach(basket => {
+              this.totalCredit += basket.credits;
+            });
           }
         });
       }
@@ -130,62 +137,72 @@ export default {
       if (this.openingYear === null || this.semester === null) {
         await this.fetchCurrentYearAndSemester();
       }
-      axios
-        .get(this.lectureBaseUrl, {
-          params: { openingYear: this.openingYear, semester: this.semester, page: pageNumber },
-        })
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.lectures = res.data.data.lectures;
-            this.applicants = Array.from({ length: this.lectures.length }, () => null);
-            this.currentPage = res.data.data.number;
-            this.hasPrevious = !res.data.data.first;
-            this.hasNext = !res.data.data.last;
-          }
-        });
+      axios.get(this.lectureBaseUrl, {
+        params: {openingYear: this.openingYear, semester: this.semester, page: pageNumber},
+      })
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.lectures = res.data.data.lectures;
+              this.applicants = Array.from({length: this.lectures.length}, () => null);
+              this.currentPage = res.data.data.number;
+              this.hasPrevious = !res.data.data.first;
+              this.hasNext = !res.data.data.last;
+            }
+          });
     },
     cancelLecture(basketId, index) {
-      axios
-        .delete(this.basketBaseUrl + "/" + basketId)
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.studentBasket.splice(index, 1);
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.data.code == 400) {
-            alert(error.response.data.message);
-          }
-        });
+      axios.delete(this.basketBaseUrl + "/" + basketId)
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.totalCredit -= this.studentBasket[index].credits;
+              this.studentBasket.splice(index, 1);
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.data.code == 400) {
+              alert(error.response.data.message);
+            }
+          });
     },
     fetchApplicants(lectureId, index) {
-      axios
-        .get(this.lectureBaseUrl + "/" + lectureId + "/basket-count")
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.applicants[index] = res.data.data.currentBasketStoringCount;
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.data.code == 400) {
-            alert(error.response.data.message);
-          }
-        });
+      axios.get(this.lectureBaseUrl + "/" + lectureId + "/basket-count")
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.applicants[index] = res.data.data.currentBasketStoringCount;
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.data.code == 400) {
+              alert(error.response.data.message);
+            }
+          });
     },
     async fetchCurrentYearAndSemester() {
-      await axios
-        .get(this.fetchYearAndSemesterUrl)
-        .then((res) => {
-          if (res.data.code == 200) {
-            this.openingYear = res.data.data.year;
-            this.semester = res.data.data.semester;
-          }
-        })
-        .catch((error) => {
-          if (error.response && error.response.data.code == 400) {
-            alert(error.response.data.message);
-          }
-        });
+      await axios.get(this.fetchYearAndSemesterUrl)
+          .then((res) => {
+            if (res.data.code == 200) {
+              this.openingYear = res.data.data.year;
+              this.semester = res.data.data.semester;
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.data.code == 400) {
+              alert(error.response.data.message);
+            }
+          });
+    },
+    registerLecture(lectureId) {
+       axios.post(this.basketBaseUrl + "/" + lectureId)
+          .then((res) => {
+            if (res.data.code === 200) {
+              window.location = '/basket';
+            }
+          })
+          .catch((error) => {
+            if (error.response) {
+              alert(error.response.data.message);
+            }
+          });
     },
   },
 };
